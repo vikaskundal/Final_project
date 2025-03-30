@@ -30,6 +30,7 @@ async function signUp(req,res){
                password:hashedpassword
            }
        );
+       
         
 
        // save the user to the database
