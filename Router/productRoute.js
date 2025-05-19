@@ -11,12 +11,12 @@ const {
 const adminMiddleware = require('../Middleware/adminMiddleware');
 
 //public routes
-router.get('products',GetAllProduct);
+router.get('/products',GetAllProduct);
 router.get('/products/:id',GetProductById);
 
 // Admin routes only
-router.post('/products', adminMiddleware, CreateProduct);
-router.put('/products/:id',adminMiddleware, UpdateProduct);
+router.post('/products', CreateProduct);
+router.put('/products/:id', UpdateProduct);
 router.delete('/products/:id',adminMiddleware,DeleteProduct);
 
 module.exports=router;

@@ -1,6 +1,7 @@
 const bcrypt=require('bcryptjs');
-const User=require('../Models/User');
-
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const User = require('../Models/User')
 const mongoose=require('mongoose');
 const {generateToken}=require('../Middleware/authMiddleware');
 
@@ -90,8 +91,76 @@ async function logIn(req,res){
    }
 
 }
+// forget password
+; // Your User model
+
+async function forgotPassword(req, res) {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  // Generate reset token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const expiry = Date.now() + 1000 * 60 * 60; // Token expires in 1 hour
+
+  user.resetToken = resetToken;
+  user.resetTokenExpiry = expiry;
+  await user.save();
+
+  // Send email with the reset link
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'vikaskundal74@gmail.com',
+      pass: 'xmgs vqnv cckc zglj',
+    },
+  });
+
+  const resetUrl = `http://localhost:5173/reset-password?token=${resetToken}`;
+
+  await transporter.sendMail({
+    to: user.email,
+    subject: 'Password Reset Request',
+    html: `<p>You requested a password reset</p><p><a href="${resetUrl}">Click here to reset</a></p>`,
+  });
+
+  res.json({ message: 'Password reset link sent to your email' });
+}
+
+
+//Reset password
+
+async function resetPassword(req, res) {
+  const { token, newPassword } = req.body;
+
+  const user = await User.findOne({
+    resetToken: token,
+    resetTokenExpiry: { $gt: Date.now() }, // Check if token has not expired
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid or expired token' });
+  }
+
+  // Hash new password and update user
+  const hashedPassword = await bcrypt.hash(newPassword, 12);
+  user.password = hashedPassword;
+  user.resetToken = undefined; // Clear the reset token
+  user.resetTokenExpiry = undefined; // Clear the expiry time
+
+  await user.save();
+
+  res.json({ message: 'Password has been reset successfully' });
+}
+
 
 module.exports={
    signUp,
-   logIn
+   logIn,
+   resetPassword,
+   forgotPassword
+
 };

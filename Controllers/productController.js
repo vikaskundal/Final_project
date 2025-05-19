@@ -30,21 +30,23 @@ const UpdateProduct=async(req,res)=>{
 
 // getting  all the product
 
-const GetAllProduct=async(req,res)=>{
-    try{
-        const allProduct= await Product.find();
-        if(!allProduct){
-            res.status(404).json({
-                'message':'no product Found'
-            })
-        }
-        res.status(200).json(allProduct);
-        
-    }catch(error){
-        console.log('error  while getting all the product')
-        res.status(500).json({'message':error.message})
+const GetAllProduct = async (req, res) => {
+    try {
+      const allProduct = await Product.find();
+  
+      if (!allProduct || allProduct.length === 0) {
+        return res.status(404).json({
+          message: 'No products found',
+        });
+      }
+  
+      res.status(200).json(allProduct);
+  
+    } catch (error) {
+      console.log('Error while getting all the products:', error.message);
+      res.status(500).json({ message: error.message });
     }
-}
+  };
 
 // getting product by Id
 
