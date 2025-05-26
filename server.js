@@ -4,7 +4,7 @@ const cors = require('cors');
 const app=express();
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const { connectedDB } = require('./Config/db');
+const { connectedDB } = require('./db');
 const authRoutes = require('./Router/authRoutes');
 const productRoutes = require('./Router/productRoute'); 
 
