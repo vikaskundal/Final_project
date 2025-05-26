@@ -27,15 +27,18 @@ app.use('/api',productRoutes);
 // app.use(express.static(path.join(__dirname, 'dist')));
 
 // Send index.html for any route (client-side routing support)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// Serve React's build folder in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('frontend/build'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+  });
+}
 
 
 
 
-
-const PORT=process.env.PORT || 5000
+const PORT=process.env.PORT 
  app.listen( PORT,()=>{
     console.log(`server is running on the ${PORT}`)
  });
