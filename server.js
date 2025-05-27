@@ -16,7 +16,15 @@ dotenv.config();
 connectedDB();
 // Definning the routes
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'https://projectone-frontend-3.onrender.com', // Your frontend URL
+    'http://localhost:3000' // For local development
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 // login and SignUp
 app.use('/auth', authRoutes);
@@ -38,7 +46,7 @@ if (process.env.NODE_ENV === 'production') {
 
 
 
-const PORT=process.env.PORT 
+const PORT=process.env.PORT || 10000
  app.listen( PORT,()=>{
     console.log(`server is running on the ${PORT}`)
  });
