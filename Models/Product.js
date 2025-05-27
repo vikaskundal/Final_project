@@ -10,4 +10,5 @@ const ProductSchema = new mongoose.Schema({
 
 const ProductModel= mongoose.model('Products', ProductSchema);
 
-module.exports=ProductModel;
+// models/Product.js
+module.exports = mongoose.model('Product', ProductSchema); // Singular 'Product'
